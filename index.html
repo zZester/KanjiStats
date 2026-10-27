@@ -100,6 +100,18 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}
 .mfil{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 .mfil button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 14px;border-radius:99px;cursor:pointer}
 .mfil button.on{background:var(--known);border-color:var(--known);color:#fff}
+.newk{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:20px}
+.newk .nh{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.newk .nh b{font-size:17px}
+.newk .ns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.newk .ns div{background:var(--bg);border-radius:10px;padding:8px 14px;font-size:12px;color:var(--mute);min-width:104px}
+.newk .ns b{display:block;font-size:20px;color:var(--ink)}
+.newk .ns em{font-style:normal;font-weight:600;color:var(--known)}
+.newk h4{margin:14px 0 8px;font-size:13px;color:var(--mute);font-weight:600}
+.newk .ng{max-height:270px;overflow:auto;padding:2px}
+.newk .ng .grid{grid-template-columns:repeat(auto-fill,minmax(46px,46px))}
+.newk ul{margin:0;padding-left:18px;font-size:13px;color:var(--mute)}
+.newk .none{font-size:14px;color:var(--mute);margin:0}
 </style>
 </head>
 <body>
@@ -119,6 +131,10 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}
  <input type="file" id="file" accept=".txt,text/plain" hidden>
  <div id="paste"><textarea id="ta" placeholder="Paste your kanji here"></textarea><div class="row" style="margin-top:8px"><button class="btn p" id="go">Import</button></div></div>
  <div id="msg"></div>
+</section>
+<section class="newk hide" id="newk" aria-live="polite">
+ <div class="nh"><b id="newkTitle">What changed</b><button class="btn" id="newkClose">Close</button></div>
+ <div id="newkBody"></div>
 </section>
 <section class="hero">
  <div class="ring"><svg width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="var(--unk-bg)" stroke-width="12"/><circle id="arc" cx="60" cy="60" r="50" fill="none" stroke="var(--known)" stroke-width="12" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/></svg><div class="pct"><span id="pct"></span><small>of top 1000</small></div></div>
@@ -300,12 +316,57 @@ const msg=$('msg');
 function importText(txt){
  const found=new Set((txt.match(/[\u3400-\u4dbf\u4e00-\u9fff]/g)||[]));
  if(!found.size){msg.textContent='No kanji found in that text.';return}
+ const before=new Set(known);
  if(!$('merge').checked)known=new Set();
  found.forEach(c=>known.add(c));
  save();snapshot();pop.style.display='none';
  msg.textContent='Imported '+found.size+' kanji. You now have '+known.size+' saved.';
  render();
+ showNew(before);
 }
+/* what changed after an import */
+const nf=n=>Number(n).toLocaleString('en-US');
+function setStats(set){
+ return{tot:set.size,a:D.slice(0,1000).filter(x=>set.has(x.c)).length,b:D.filter(x=>set.has(x.c)).length,jy:[...set].filter(c=>JY.has(c)).length};
+}
+function tileFor(c,k){
+ const i=D.findIndex(x=>x.c===c);
+ return '<button class="t'+(k?' k':'')+'" '+(i>=0?'data-r="'+(i+1)+'"':'data-c="'+c+'"')+' aria-label="'+c+'">'+c+'</button>';
+}
+function rankKey(c){const i=D.findIndex(x=>x.c===c);return i<0?1e6+c.codePointAt(0):i}
+function showNew(before){
+ const added=[...known].filter(c=>!before.has(c)).sort((x,y)=>rankKey(x)-rankKey(y));
+ const removed=[...before].filter(c=>!known.has(c)).sort((x,y)=>rankKey(x)-rankKey(y));
+ const A=setStats(before),B=setStats(known);
+ const first=!before.size;
+ $('newkTitle').textContent=first?'Your starting list':(added.length||removed.length?'What changed in this import':'Nothing new in this import');
+ const chip=(label,a,b)=>{const d=b-a;return '<div><b>'+nf(b)+(d&&!first?' <em>'+(d>0?'+':'\u2212')+nf(Math.abs(d))+'</em>':'')+'</b>'+label+'</div>'};
+ let html='<div class="ns">'+chip('kanji known in total',A.tot,B.tot)+chip('in the top 1000',A.a,B.a)+chip('in the top 3000',A.b,B.b)+chip('J\u014dy\u014d kanji',A.jy,B.jy)+'</div>';
+ if(!added.length&&!removed.length){
+  html+='<p class="none">Every kanji in this list was already saved, so your progress is unchanged.</p>';
+ }
+ if(added.length){
+  const inList=added.filter(c=>rankKey(c)<1e6).length;
+  html+='<h4>'+(first?'Your kanji':'New kanji')+', most common first ('+nf(added.length)+(inList<added.length?', '+nf(added.length-inList)+' outside the top 3000, shown last':'')+')</h4><div class="ng"><div class="grid">'+added.map(c=>tileFor(c,true)).join('')+'</div></div>';
+ }
+ if(removed.length){
+  html+='<h4>No longer in your list ('+nf(removed.length)+'). Tick \u201cAdd to current list\u201d next time to keep old kanji.</h4><div class="ng"><div class="grid">'+removed.map(c=>tileFor(c,false)).join('')+'</div></div>';
+ }
+ if(typeof allM==='function'&&!first){
+  const rows=[];
+  allM().forEach(m=>{
+   const a=analyze(m);if(!a.total)return;
+   const pc=set=>a.list.reduce((s,x)=>s+(set.has(x.c)?x.s:0),0)/a.total*100;
+   const x=pc(before),y=pc(known);
+   if(Math.abs(y-x)>=0.05)rows.push('<li>'+esc(m.title)+': about '+x.toFixed(1)+'% of its kanji known before, '+y.toFixed(1)+'% now</li>');
+  });
+  if(rows.length)html+='<h4>Manga coverage</h4><ul>'+rows.join('')+'</ul>';
+ }
+ $('newkBody').innerHTML=html;
+ const box=$('newk');box.classList.remove('hide');
+ if(box.scrollIntoView)box.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+$('newkClose').onclick=()=>$('newk').classList.add('hide');
 const file=$('file');
 $('pick').onclick=()=>file.click();
 file.onchange=()=>{const fl=file.files[0];if(fl)fl.text().then(importText);file.value=''};
