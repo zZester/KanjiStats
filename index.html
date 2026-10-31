@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Kanji Garden: Top 1000</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@500;700&family=Inter:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <style>
 :root{--bg:#f6f4ef;--card:#fffdf8;--ink:#23201b;--mute:#8a8478;--line:#e4dfd3;--known:#2f7d5b;--known-bg:#dff1e6;--known-ink:#14412c;--unk-bg:#ece8dd;--unk-ink:#a39d8e;--accent:#c4553a;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -157,12 +157,74 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}
 .cov .mt .grid{grid-template-columns:repeat(auto-fill,minmax(46px,46px))}
 .cov small{display:block;color:var(--mute);font-size:12px;margin-top:14px;max-width:72ch}
 @media(max-width:640px){.cov .crow{grid-template-columns:104px 1fr 44px}}
+
+:root:root:root{--bg:#F1EBDD;--card:#FAF6EC;--ink:#2B2620;--mute:#74695A;--line:#DDD2BC;--known:#3A7357;--known-hi:#5A9A7C;--known-bg:#DDEBDD;--known-ink:#F7F2E6;--unk-bg:#E8DFCB;--unk-ink:#76695A;--accent:#C8412B;--serif:"Noto Serif JP","Noto Serif CJK JP","Hiragino Mincho ProN","Yu Mincho",serif;--hi:rgba(255,255,255,.65);--sh:rgba(70,45,10,.3)}
+@media (prefers-color-scheme:dark){:root:root:root{--bg:#15181B;--card:#1E2226;--ink:#EDE8DC;--mute:#A39B8B;--line:#2F353A;--known:#5FB48F;--known-hi:#8FD3B1;--known-bg:#23382F;--known-ink:#10231B;--unk-bg:#262B30;--unk-ink:#8E877A;--accent:#E8664D;--hi:rgba(255,255,255,.07);--sh:rgba(0,0,0,.55)}.bd{color:#201410!important}}
+body{font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;background:var(--bg)}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.035;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.jp,h1,.stat b,.band .bh b,.next b,.mnext b,.mcard b,.hh b,.cov h3{font-family:var(--serif)}
+.mast{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.brand{display:flex;align-items:center;gap:16px}
+.hanko{width:56px;height:56px;flex:none;transform:rotate(-5deg);filter:drop-shadow(0 2px 0 rgba(120,30,15,.25))}
+h1{margin:0;font-size:42px;font-weight:700;letter-spacing:.1em;line-height:1.1}
+.sub{margin:4px 0 0;max-width:46ch;font-size:14px}
+.hero,.cov,.hist,.next,.band,.imp,.newk,.mcard,.mnext,#pop{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:inset 0 1px 0 var(--hi),0 14px 30px -22px var(--sh)}
+.bento{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;margin-bottom:20px;align-items:stretch}
+.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;padding:28px 58px 28px 28px;margin:0}
+.cov{position:relative;overflow:hidden;margin:0}
+.hero .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.hero .stat{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.ring{position:relative;width:210px;height:210px}
+.ring svg{transform:rotate(-90deg)}
+#arc{filter:drop-shadow(0 0 5px var(--known));transition:stroke-dashoffset .9s cubic-bezier(.3,.8,.3,1)}
+.pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pct span{font-family:var(--serif);font-weight:700;font-size:52px;line-height:1}
+.pct small{font-size:12px;color:var(--mute);margin-top:4px}
+.vt{position:absolute;right:16px;top:20px;writing-mode:vertical-rl;font-family:var(--serif);font-size:14px;letter-spacing:.35em;color:var(--mute)}
+.wm{position:absolute;pointer-events:none;color:var(--ink);opacity:.08;width:300px;height:160px;right:0;bottom:0;-webkit-mask-image:radial-gradient(circle at 100% 100%,#000 15%,transparent 72%);mask-image:radial-gradient(circle at 100% 100%,#000 15%,transparent 72%)}
+.wm2{width:210px;height:170px;top:0;bottom:auto;opacity:.12;-webkit-mask-image:radial-gradient(circle at 100% 0,#000 20%,transparent 75%);mask-image:radial-gradient(circle at 100% 0,#000 20%,transparent 75%)}
+.cov>*:not(.wm){position:relative}
+.imp#drop{overflow:hidden;max-height:0;opacity:0;margin-bottom:0;padding-top:0;padding-bottom:0;border-width:0;border-style:dashed;transition:max-height .45s cubic-bezier(.4,0,.2,1),opacity .3s,margin .3s,padding .3s}
+.imp#drop.open{max-height:560px;opacity:1;margin-bottom:20px;padding-top:16px;padding-bottom:16px;border-width:1px}
+.btn.p,.nav button.on,.toolbar button.on,.mfil button.on,.cov .cs button.on,.seg button.on{background:var(--known);border-color:var(--known);color:var(--known-ink)}
+.toolbar{background:color-mix(in srgb,var(--bg) 70%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);border-bottom:1px solid var(--line);border-radius:0 0 16px 16px;padding:12px 8px 0}
+.seg{display:inline-flex;padding:3px;border:1px solid var(--line);border-radius:99px;background:var(--card);margin-bottom:10px}
+.seg button{border:0!important;background:transparent;border-radius:99px;padding:6px 16px}
+.toolbar input{border:1px solid var(--line);border-radius:99px;padding:7px 14px 7px 36px;background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='M11 11l4 4'/%3E%3C/svg%3E") 12px center no-repeat;color:var(--ink);width:min(280px,100%)}
+.t{border-radius:12px;border:1px solid transparent;background:var(--unk-bg);color:var(--unk-ink);box-shadow:inset 0 1px 3px rgba(0,0,0,.09),inset 0 -1px 0 var(--hi);transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .2s}
+.t.k{background:linear-gradient(165deg,var(--known-hi),var(--known));color:var(--known-ink);border-color:rgba(0,0,0,.2);font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 2px 0 rgba(0,0,0,.2),0 7px 12px -5px var(--sh)}
+.t:hover,.t:focus-visible{transform:translateY(-3px) scale(1.07)}
+#pop{position:fixed;width:min(640px,94vw);max-width:none;padding:22px 26px;gap:26px;align-items:center;overflow:hidden;border-radius:22px}
+#pop[style*="flex"]{animation:rise .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes rise{from{opacity:0;transform:translate(-50%,16px) scale(.96)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+.pw{position:absolute;right:-6px;bottom:-70px;font-size:250px;line-height:1;opacity:.07;pointer-events:none}
+.cal{flex:none;width:136px;height:136px;display:flex;align-items:center;justify-content:center;font-size:86px;border:2px solid var(--ink);outline:1px solid var(--line);outline-offset:4px;border-radius:6px;background:linear-gradient(to right,transparent calc(50% - .5px),var(--line) 50%,transparent calc(50% + .5px)),linear-gradient(to bottom,transparent calc(50% - .5px),var(--line) 50%,transparent calc(50% + .5px)),var(--bg)}
+.pi{position:relative;z-index:1;flex:1;min-width:0}
+.pm{font-family:var(--serif);font-weight:700;font-size:22px;margin-bottom:8px}
+.pr{display:flex;align-items:center;gap:10px;font-size:15px;margin:6px 0}
+.bd{flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:14px}
+.pr+.pr .bd{background:var(--known);color:var(--known-ink)}
+#pop .d{font-size:13px;color:var(--mute);margin-top:6px}
+.pa{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.pa .btn{padding:6px 14px;font-size:13px}
+.chart svg{overflow:visible}
+@media(max-width:900px){.bento{grid-template-columns:1fr}}
+@media(max-width:640px){.hero{grid-template-columns:1fr;justify-items:center;padding:24px 44px 24px 18px}.hero .stats{width:100%}h1{font-size:34px}#pop{flex-direction:column;gap:14px;text-align:left;align-items:stretch;padding:18px}.cal{width:104px;height:104px;font-size:64px;align-self:center}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.ring svg{overflow:visible}
+.vt{text-orientation:upright;line-height:1.2;font-size:15px;letter-spacing:.18em}
+.tag.k{background:var(--known);color:var(--known-ink)}
+.chart svg path[style*="url(#gB"]{opacity:.8}
+.vt{display:block;width:1.4em;height:10em;white-space:nowrap;letter-spacing:.15em;text-orientation:mixed}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="sg" width="40" height="20" patternUnits="userSpaceOnUse"><g fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="0" cy="20" r="18"/><circle cx="0" cy="20" r="12"/><circle cx="0" cy="20" r="6"/><circle cx="40" cy="20" r="18"/><circle cx="40" cy="20" r="12"/><circle cx="40" cy="20" r="6"/><circle cx="20" cy="10" r="18"/><circle cx="20" cy="10" r="12"/><circle cx="20" cy="10" r="6"/></g></pattern><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="1.8"/></filter><linearGradient id="ringg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--known-hi)"/><stop offset="1" style="stop-color:var(--known)"/></linearGradient></defs></svg>
 <main>
-<h1 class="jp">漢字の庭</h1>
-<p class="sub">The 3,000 most frequent kanji according to jpdb, in frequency order. Import the kanji you know and watch your garden grow.</p>
+<header class="mast">
+ <div class="brand"><svg class="hanko" viewBox="0 0 48 48" role="img" aria-label="Hanko seal"><rect x="3" y="3" width="42" height="42" rx="5" fill="#C8412B" filter="url(#rough)"/><rect x="7" y="7" width="34" height="34" rx="2" fill="none" stroke="#F7EFE0" stroke-width="1.4" opacity=".75"/><text x="24" y="35" text-anchor="middle" font-family="Noto Serif JP,serif" font-weight="900" font-size="27" fill="#F7EFE0">庭</text></svg><div><h1 class="jp">漢字の庭</h1><p class="sub">The 3,000 most frequent kanji, ranked by jpdb. Import what you know and watch the garden grow.</p></div></div>
+ <button class="btn p" id="drawerBtn" aria-expanded="false" aria-controls="drop">＋ Import / Update Kanji</button>
+</header>
 <div class="nav" id="nav"><button class="on" data-v="garden">Kanji Garden</button><button data-v="manga">Manga</button></div>
 <div id="garden">
 <section class="imp" id="drop">
@@ -181,16 +243,21 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}
  <div class="nh"><b id="newkTitle">What changed</b><button class="btn" id="newkClose">Close</button></div>
  <div id="newkBody"></div>
 </section>
+<div class="bento">
 <section class="hero">
- <div class="ring"><svg width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="var(--unk-bg)" stroke-width="12"/><circle id="arc" cx="60" cy="60" r="50" fill="none" stroke="var(--known)" stroke-width="12" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/></svg><div class="pct"><span id="pct"></span><small>of top 1000</small></div></div>
+ <svg class="wm" aria-hidden="true" viewBox="0 0 300 160"><rect width="300" height="160" fill="url(#sg)"/></svg>
+ <span class="vt" aria-hidden="true">常用・頻出三千字</span>
+ <div class="ring"><svg width="210" height="210" viewBox="0 0 120 120"><circle cx="60" cy="60" r="58.5" fill="none" stroke="var(--line)" stroke-width="2" stroke-dasharray="1 3.08"/><circle cx="60" cy="60" r="50" fill="none" stroke="var(--unk-bg)" stroke-width="12"/><circle cx="60" cy="60" r="43" fill="none" stroke="var(--line)" stroke-width=".8"/><circle id="arc" cx="60" cy="60" r="50" fill="none" stroke="url(#ringg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/></svg><div class="pct"><span id="pct"></span><small>of the top 1000</small></div></div>
  <div class="stats" id="stats"></div>
 </section>
 <section class="cov" id="cov">
+ <svg class="wm wm2" aria-hidden="true" viewBox="0 0 210 170"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M205 6C170 40 140 70 100 110C70 138 40 156 8 164"/><path d="M160 46C150 30 160 16 176 14M128 76C112 66 108 50 118 38M96 112C82 100 82 84 92 74M66 138C74 120 90 116 104 120"/></g><g fill="currentColor"><circle cx="178" cy="14" r="6"/><circle cx="118" cy="38" r="5"/><circle cx="92" cy="74" r="5"/><circle cx="106" cy="120" r="4"/><circle cx="196" cy="24" r="3"/></g></svg>
  <h3>How much can you read?</h3>
  <div class="cs" id="covChips"></div>
  <div id="covBody"></div>
  <small>This is the share of kanji characters you would recognize in each kind of text, from published counts (2015 corpora, kanji-frequency by scriptin, CC BY 4.0). Understanding a sentence also takes vocabulary and grammar, so treat it as an upper limit.</small>
 </section>
+</div>
 <section class="hist" id="hist">
  <div class="hh"><b>Progress history</b><button class="btn" id="resetHist">Reset history</button></div>
  <div class="leg"><span><i style="background:var(--accent)"></i>Total kanji known</span><span><i style="background:var(--known)"></i>Known in top 1000</span></div>
@@ -200,7 +267,7 @@ h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}
 <div class="next" id="next"><b>Next to learn</b><div class="grid" id="nextg"></div></div>
 <div class="toolbar">
  <div class="tabs" id="tabs"></div>
- <button class="on" data-f="all">All</button><button data-f="k">Known</button><button data-f="u">Missing</button>
+ <div class="seg"><button class="on" data-f="all">All</button><button data-f="k">Known</button><button data-f="u">Missing</button></div>
  <span class="sp"></span><input id="q" placeholder="Kanji, kana, romaji or meaning">
  <div class="lvs" id="lvs" aria-label="JLPT level"></div>
 </div>
@@ -263,23 +330,21 @@ function snapshot(){
 function drawChart(){
  const ch=$('chart'),note=$('hnote');
  if(!hist.length){ch.innerHTML='';note.textContent='Import your kanji to start tracking. Each import on a new day adds a point.';return}
- if(hist.length<2){
-  ch.innerHTML='';
-  note.textContent='First snapshot saved on '+hist[0].d+' with '+hist[0].t+' kanji. Import an updated list on another day to see your growth.';return;
- }
- const W=600,H=190,L=34,R=12,T=10,B=26;
- const ts=hist.map(h=>new Date(h.d+'T00:00:00').getTime());
- const t0=ts[0],t1=ts[ts.length-1];
- const ymax=Math.max(...hist.map(h=>Math.max(h.t,h.a)),1);
- const x=i=>L+(t1===t0?0:(ts[i]-t0)/(t1-t0))*(W-L-R);
- const y=v=>T+(1-v/ymax)*(H-T-B);
- const line=(k,col)=>'<polyline fill="none" stroke="'+col+'" stroke-width="2.5" stroke-linejoin="round" points="'+hist.map((h,i)=>x(i).toFixed(1)+','+y(h[k]).toFixed(1)).join(' ')+'"/>'+hist.map((h,i)=>'<circle cx="'+x(i).toFixed(1)+'" cy="'+y(h[k]).toFixed(1)+'" r="4" fill="'+col+'"><title>'+h.d+': '+h[k]+'</title></circle>').join('');
- let g='';
- for(let i=0;i<=4;i++){const v=Math.round(ymax*i/4),yy=y(v);g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy+'" y2="'+yy+'" stroke="var(--line)"/><text x="'+(L-6)+'" y="'+(yy+4)+'" text-anchor="end">'+v+'</text>'}
- g+='<text x="'+L+'" y="'+(H-6)+'">'+hist[0].d+'</text><text x="'+(W-R)+'" y="'+(H-6)+'" text-anchor="end">'+hist[hist.length-1].d+'</text>';
- ch.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Progress history chart">'+g+line('t','var(--accent)')+line('a','var(--known)')+'</svg>';
- const first=hist[0],last=hist[hist.length-1],days=Math.round((t1-t0)/864e5);
- const dl=last.t-first.t;
+ if(hist.length<2){ch.innerHTML='';note.textContent='First snapshot saved on '+hist[0].d+' with '+hist[0].t+' kanji. Import an updated list on another day to see your growth.';return}
+ const W=600,H=210,L=38,R=16,T=16,B=30,ts=hist.map(e=>new Date(e.d+'T00:00:00').getTime()),t0=ts[0],t1=ts[ts.length-1];
+ const ymax=Math.max(...hist.map(e=>Math.max(e.t,e.a)),1),x=i=>L+(t1===t0?0:(ts[i]-t0)/(t1-t0))*(W-L-R),y=v=>T+(1-v/ymax)*(H-T-B),f1=n=>n.toFixed(1);
+ const series=(k,col,id)=>{
+  const P=hist.map((e,i)=>[x(i),y(e[k])]);let d='M'+f1(P[0][0])+','+f1(P[0][1]);
+  for(let i=0;i<P.length-1;i++){const a=P[i-1]||P[i],b=P[i],c=P[i+1],e=P[i+2]||c;d+='C'+f1(b[0]+(c[0]-a[0])/6)+','+f1(b[1]+(c[1]-a[1])/6)+' '+f1(c[0]-(e[0]-b[0])/6)+','+f1(c[1]-(e[1]-b[1])/6)+' '+f1(c[0])+','+f1(c[1])}
+  const base=H-B,last=P[P.length-1];
+  return '<path d="'+d+'L'+f1(last[0])+','+base+'L'+f1(P[0][0])+','+base+'Z" style="fill:url(#'+id+')"/><path d="'+d+'" fill="none" stroke-width="2.5" stroke-linecap="round" style="stroke:'+col+'"/>'+P.map((p,i)=>'<circle cx="'+f1(p[0])+'" cy="'+f1(p[1])+'" r="9" style="fill:'+col+'" opacity=".18"/><circle cx="'+f1(p[0])+'" cy="'+f1(p[1])+'" r="4" filter="url(#hg)" style="fill:'+col+'"><title>'+hist[i].d+': '+hist[i][k]+'</title></circle>').join('');
+ };
+ const grad=(id,col)=>'<linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:'+col+';stop-opacity:.28"/><stop offset="1" style="stop-color:'+col+';stop-opacity:0"/></linearGradient>';
+ let g='<defs>'+grad('gA','var(--accent)')+grad('gB','var(--known)')+'<filter id="hg" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+ for(let i=0;i<=4;i++){const v=Math.round(ymax*i/4),yy=y(v);g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+f1(yy)+'" y2="'+f1(yy)+'" stroke-dasharray="2 5" style="stroke:var(--line)"/><text x="'+(L-8)+'" y="'+f1(yy+4)+'" text-anchor="end" style="fill:var(--mute);font-size:11px">'+v+'</text>'}
+ g+='<text x="'+L+'" y="'+(H-8)+'" style="fill:var(--mute);font-size:11px">'+hist[0].d+'</text><text x="'+(W-R)+'" y="'+(H-8)+'" text-anchor="end" style="fill:var(--mute);font-size:11px">'+hist[hist.length-1].d+'</text>';
+ ch.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Progress history chart" style="width:100%;height:auto;display:block">'+g+series('t','var(--accent)','gA')+series('a','var(--known)','gB')+'</svg>';
+ const first=hist[0],last=hist[hist.length-1],days=Math.round((t1-t0)/864e5),dl=last.t-first.t;
  note.textContent=(dl>=0?'+':'')+dl+' kanji over '+days+' day'+(days===1?'':'s')+' since '+first.d+'.';
 }
 function render(){
@@ -305,11 +370,22 @@ function render(){
  renderLevels();
  apply();
 }
-function openCard(t){
- const x=t.dataset.c?cardFor(t.dataset.c):D[t.dataset.r-1],isK=known.has(x.c);
- pop.innerHTML='<div class="big jp">'+x.c+'</div><div><div class="m">'+(x.m||'\u2013')+'</div><div class="d">On: '+(x.on.join('\u3001')||'\u2013')+'</div><div class="d">Kun: '+(x.kun.join('\u3001')||'\u2013')+'</div><div class="d">Rank #'+x.r+' \u00b7 '+x.g+(lvOf(x.c)?', N'+lvOf(x.c):'')+'</div><span class="tag '+(isK?'k':'u')+'">'+(isK?'Known':'Not yet')+'</span></div>';
- pop.style.display='flex';
+let popChar='';
+function fillPop(x){
+ const isK=known.has(x.c),lvl=lvOf(x.c);
+ pop.innerHTML='<div class="pw jp" aria-hidden="true">'+x.c+'</div><div class="cal jp">'+x.c+'</div><div class="pi"><div class="pm">'+(x.m||'\u2013')+'</div><div class="pr"><span class="bd">\u97f3</span>'+(x.on.join('\u3001')||'\u2013')+'</div><div class="pr"><span class="bd">\u8a13</span>'+(x.kun.join('\u3001')||'\u2013')+'</div><div class="d">Rank '+x.r+', '+x.g+(lvl?', N'+lvl:'')+'</div><div class="pa"><span class="tag '+(isK?'k':'u')+'">'+(isK?'Known':'Not yet')+'</span><button class="btn" id="popToggle">'+(isK?'Mark as unknown':'Mark as known')+'</button></div></div>';
 }
+function openCard(t){
+ const x=t.dataset.c?cardFor(t.dataset.c):D[t.dataset.r-1];
+ popChar=x.c;fillPop(x);pop.style.display='flex';
+}
+pop.addEventListener('click',e=>{
+ if(!e.target.closest('#popToggle'))return;
+ e.stopPropagation();
+ const c=popChar;if(known.has(c))known.delete(c);else known.add(c);
+ save();render();if(curM)renderDetail();
+ const i=CIDX.get(c);fillPop(i!==undefined?D[i]:cardFor(c));
+});
 document.addEventListener('click',e=>{
  const t=e.target.closest('.t');
  if(t){openCard(t);return}
@@ -417,6 +493,7 @@ function importText(txt){
  msg.textContent='Imported '+found.size+' kanji. You now have '+known.size+' saved.';
  render();
  showNew(before);
+ setDrawer(false);
 }
 /* what changed after an import */
 const nf=n=>Number(n).toLocaleString('en-US');
@@ -605,9 +682,14 @@ function showView(v){
  $('garden').classList.toggle('hide',v!=='garden');
  $('manga').classList.toggle('hide',v!=='manga');
  pop.style.display='none';
+ $('drawerBtn').classList.toggle('hide',v!=='garden');
  if(v==='manga'){if(curM)renderDetail();else renderCatalog()}
 }
 document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>showView(b.dataset.v));
+const drawer=$('drop'),dbtn=$('drawerBtn');
+function setDrawer(o){drawer.classList.toggle('open',o);dbtn.setAttribute('aria-expanded',String(o))}
+dbtn.onclick=()=>setDrawer(!drawer.classList.contains('open'));
+setDrawer(!known.size);
 </script>
 </body>
 </html>
