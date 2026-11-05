@@ -34,20 +34,47 @@ def get(path, params=None, tries=6):
                 time.sleep(2 ** attempt); continue
             raise
 
-def deck_title(d):
-    return d.get("englishTitle") or d.get("romajiTitle") or d.get("originalTitle") or "Untitled"
+def deck_title(d, default="Untitled"):
+    return d.get("englishTitle") or d.get("romajiTitle") or d.get("originalTitle") or default
+
+EXT = {"image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp"}
+
+def download_cover(deck_id, cover_url, folder):
+    """Save the cover next to the catalog. Jiten's CDN can resize with ?width=."""
+    if not cover_url or cover_url.endswith("nocover.jpg"):
+        return None
+    url = cover_url
+    if "cdn.jiten.moe" in url:
+        url += ("&" if "?" in url else "?") + "width=320"
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "kanji-garden-catalog/1.0 (personal project)"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            ext = EXT.get(r.headers.get_content_type(), ".jpg")
+            data = r.read(1500000)
+        if len(data) < 500:
+            return None
+        os.makedirs(folder, exist_ok=True)
+        name = "jiten-%s%s" % (deck_id, ext)
+        open(os.path.join(folder, name), "wb").write(data)
+        time.sleep(DELAY)
+        return "covers/" + name
+    except Exception as e:
+        print("cover download failed for id %s: %s" % (deck_id, e), file=sys.stderr)
+        return None
 
 def search(q):
     return (get("/get-media-decks", {"titleFilter": q, "offset": 0}) or {}).get("data") or []
 
 def kanji_counts(deck_id):
-    counts, offset, total = collections.Counter(), 0, None
+    counts, offset, total, info = collections.Counter(), 0, None, {}
     while total is None or offset < total:
         resp = get("/%s/vocabulary" % deck_id, {"offset": offset, "limit": 200, "sortBy": "deckFreq", "sortOrder": "Descending"}) or {}
         data = resp.get("data")
         words = (data or {}).get("words") or []
         if not words:
             break
+        if not info:
+            info = {"deck": data.get("deck") or {}, "parent": data.get("parentDeck") or {}}
         total = resp.get("totalItems") or 0
         for w in words:
             text = (w.get("mainReading") or {}).get("text", "")
@@ -55,7 +82,7 @@ def kanji_counts(deck_id):
             for ch in KANJI.findall(text):
                 counts[ch] += n
         offset += len(words)
-    return counts
+    return counts, info
 
 def parse_line(line):
     line = line.split("#", 1)[0].strip()
@@ -67,7 +94,7 @@ def parse_line(line):
     m = re.search(r"/decks/media/(\d+)", line) or re.fullmatch(r"(\d+)", line)
     return (int(m.group(1)), None, name) if m else (None, line, name)
 
-def build(list_path, out_path):
+def build(list_path, out_path, covers=True):
     old = {}
     if os.path.exists(out_path):
         try:
@@ -88,12 +115,21 @@ def build(list_path, out_path):
                     raise ValueError("no search results for %r" % query)
                 deck_id, title = hits[0]["deckId"], name or deck_title(hits[0])
                 print("matched %r -> %s (id %s)" % (query, title, deck_id))
-            counts = kanji_counts(deck_id)
+            counts, info = kanji_counts(deck_id)
             if not counts:
                 raise ValueError("no vocabulary returned for id %s" % deck_id)
-            titles.append({"id": deck_id, "title": title or "Jiten #%s" % deck_id,
-                           "url": "https://jiten.moe/decks/media/%s/detail" % deck_id,
-                           "kc": dict(counts.most_common())})
+            deck, parent = info.get("deck", {}), info.get("parent", {})
+            if not title:
+                title = deck_title(deck, None) or deck_title(parent, None) or "Jiten #%s" % deck_id
+            cover_url = deck.get("coverName") or parent.get("coverName")
+            cover = download_cover(deck_id, cover_url, os.path.join(os.path.dirname(out_path) or ".", "covers")) if covers else None
+            cover = cover or (old.get(deck_id) or {}).get("cover")
+            entry = {"id": deck_id, "title": title,
+                     "url": "https://jiten.moe/decks/media/%s/detail" % deck_id,
+                     "kc": dict(counts.most_common())}
+            if cover:
+                entry["cover"] = cover
+            titles.append(entry)
             print("ok  %s: %d kanji" % (titles[-1]["title"], len(counts)))
         except Exception as e:
             failed += 1
@@ -116,10 +152,13 @@ def selftest():
             return {"data": [{"deckId": 7, "englishTitle": "Test", "originalTitle": "テスト"}]}
         off = params["offset"]
         rows = pages.get(off, [])
-        return {"data": {"words": [{"mainReading": {"text": t}, "occurrences": n} for t, n in rows]}, "totalItems": 4, "pageSize": 2, "currentOffset": off}
+        return {"data": {"deck": {"romajiTitle": "Yotsuba to!", "coverName": "https://cdn.jiten.moe/x.jpg"}, "parentDeck": {},
+                         "words": [{"mainReading": {"text": t}, "occurrences": n} for t, n in rows]}, "totalItems": 4, "pageSize": 2, "currentOffset": off}
     get = fake
-    c = kanji_counts(7)
+    c, info = kanji_counts(7)
     assert c == {"猫": 6, "好": 5, "犬": 2}, c
+    assert deck_title(info["deck"], None) == "Yotsuba to!" and info["deck"]["coverName"].endswith("x.jpg")
+    assert deck_title({}, None) is None
     assert search("x")[0]["deckId"] == 7
     assert parse_line("12345 | My Title") == (12345, None, "My Title")
     assert parse_line("https://jiten.moe/decks/media/55166/detail") == (55166, None, None)
@@ -129,10 +168,10 @@ def selftest():
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--list", default="tools/manga-list.txt"); ap.add_argument("--out", default="manga-catalog.json")
-    ap.add_argument("--search"); ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--search"); ap.add_argument("--selftest", action="store_true"); ap.add_argument("--no-covers", action="store_true")
     a = ap.parse_args()
     if a.selftest: selftest()
     elif a.search:
         for d in search(a.search):
             print(d.get("deckId"), "|", deck_title(d), "|", d.get("originalTitle"), "| type", d.get("mediaType"))
-    else: build(a.list, a.out)
+    else: build(a.list, a.out, covers=not a.no_covers)
