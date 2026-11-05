@@ -119,9 +119,16 @@ def build(list_path, out_path, covers=True):
             if not counts:
                 raise ValueError("no vocabulary returned for id %s" % deck_id)
             deck, parent = info.get("deck", {}), info.get("parent", {})
-            if not title:
-                title = deck_title(deck, None) or deck_title(parent, None) or "Jiten #%s" % deck_id
+            title = title or deck_title(deck, None) or deck_title(parent, None)
             cover_url = deck.get("coverName") or parent.get("coverName")
+            if not title or not cover_url:
+                resp = get("/%s/detail" % deck_id) or {}
+                detail = resp.get("data") if isinstance(resp.get("data"), dict) else resp
+                d_deck = detail.get("mainDeck") or detail.get("deck") or detail
+                d_parent = detail.get("parentDeck") or {}
+                title = title or deck_title(d_deck, None) or deck_title(d_parent, None)
+                cover_url = cover_url or d_deck.get("coverName") or d_parent.get("coverName")
+            title = title or "Jiten #%s" % deck_id
             cover = download_cover(deck_id, cover_url, os.path.join(os.path.dirname(out_path) or ".", "covers")) if covers else None
             cover = cover or (old.get(deck_id) or {}).get("cover")
             entry = {"id": deck_id, "title": title,
