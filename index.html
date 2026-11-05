@@ -597,7 +597,7 @@ const COVERC=['#2f7d5b','#b5452d','#3b5b92','#7b4b94','#8a6a1c','#2f6f7a'];
 function coverHTML(m,lg){
  const a=analyze(m),g=a.list.length?a.list[0].c:'?';
  let hsh=0;for(const ch of String(m.id))hsh=(hsh*31+ch.charCodeAt(0))>>>0;
- return '<div class="cover'+(lg?' lg':'')+'" style="background:'+COVERC[hsh%COVERC.length]+'"><span class="cg">'+g+'</span>'+(m.builtin&&!m.lib?'<img src="'+(COVERS[m.id]||'covers/'+esc(m.id)+'.jpg')+'" alt="" onerror="this.remove()">':(m.cover?'<img src="'+m.cover+'" alt="">':''))+'</div>';
+ return '<div class="cover'+(lg?' lg':'')+'" style="background:'+COVERC[hsh%COVERC.length]+'"><span class="cg">'+g+'</span>'+(m.builtin&&!m.lib?'<img src="'+(COVERS[m.id]||'covers/'+esc(m.id)+'.jpg')+'" alt="" onerror="this.remove()">':(m.cover?'<img src="'+m.cover+'" alt="" loading="lazy" decoding="async">':''))+'</div>';
 }
 function renderCatalog(){
  $('mgrid').innerHTML=allM().filter(m=>!msq||m.title.toLowerCase().includes(msq)).map(m=>{
@@ -726,7 +726,7 @@ $('msearch').addEventListener('input',e=>{msq=e.target.value.trim().toLowerCase(
 (typeof fetch==='function'?fetch('manga-catalog.json',{cache:'no-cache'}):Promise.resolve(null)).then(r=>r.ok?r.json():null).then(d=>{
  if(!d||!Array.isArray(d.titles))return;
  const have=new Set(BUILTIN.map(m=>m.title.toLowerCase()));
- CATALOG=d.titles.filter(t=>t&&t.kc&&t.title&&!have.has(String(t.title).toLowerCase())).map(t=>({id:'c'+t.id,title:String(t.title),kc:t.kc,est:false,builtin:true,lib:true}));
+ CATALOG=d.titles.filter(t=>t&&t.kc&&t.title&&!have.has(String(t.title).toLowerCase())).map(t=>({id:'c'+t.id,title:String(t.title),kc:t.kc,est:false,builtin:true,lib:true,cover:(typeof t.cover==='string'&&/^covers\/[\w.-]+$/.test(t.cover))?t.cover:''}));
  if(CATALOG.length)$('mcredit').classList.remove('hide');
  if(!$('mcat').classList.contains('hide')&&!$('manga').classList.contains('hide'))renderCatalog();
 }).catch(()=>{});
