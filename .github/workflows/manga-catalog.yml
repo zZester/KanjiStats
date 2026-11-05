@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python tools/build_catalog.py --list tools/manga-list.txt --out manga-catalog.json
+      - run: python build_catalog.py --list tools/manga-list.txt --out manga-catalog.json
         env:
           JITEN_API_KEY: ${{ secrets.JITEN_API_KEY }}
       - name: Commit the catalog
