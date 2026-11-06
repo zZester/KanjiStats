@@ -62,8 +62,23 @@ def download_cover(deck_id, cover_url, folder):
         print("cover download failed for id %s: %s" % (deck_id, e), file=sys.stderr)
         return None
 
-def search(q):
-    return (get("/get-media-decks", {"titleFilter": q, "offset": 0}) or {}).get("data") or []
+MANGA = 9  # Jiten's MediaType value for manga
+
+def search(q, media=MANGA):
+    params = {"titleFilter": q, "offset": 0}
+    if media:
+        params["mediaType"] = media
+    return (get("/get-media-decks", params) or {}).get("data") or []
+
+def titles_of(*decks):
+    """Display name (romaji first, as Jiten spells it) plus the other names, for searching."""
+    seen = []
+    for key in ("romajiTitle", "englishTitle", "originalTitle"):
+        for d in decks:
+            v = (d or {}).get(key)
+            if v and v not in seen:
+                seen.append(v)
+    return (seen[0] if seen else None), seen[1:]
 
 def kanji_counts(deck_id):
     counts, offset, total, info = collections.Counter(), 0, None, {}
@@ -108,32 +123,28 @@ def build(list_path, out_path, covers=True):
             continue
         deck_id, query, name = p
         try:
-            title = name
+            hit = None
             if deck_id is None:
                 hits = search(query)
                 if not hits:
-                    raise ValueError("no search results for %r" % query)
-                deck_id, title = hits[0]["deckId"], name or deck_title(hits[0])
-                print("matched %r -> %s (id %s)" % (query, title, deck_id))
+                    raise ValueError("no manga search results for %r" % query)
+                hit, deck_id = hits[0], hits[0]["deckId"]
+                print("matched %r -> %s (id %s)" % (query, deck_title(hit), deck_id))
             counts, info = kanji_counts(deck_id)
             if not counts:
                 raise ValueError("no vocabulary returned for id %s" % deck_id)
             deck, parent = info.get("deck", {}), info.get("parent", {})
-            title = title or deck_title(deck, None) or deck_title(parent, None)
+            display, alts = titles_of(deck, parent, hit)
+            title = name or display or "Jiten #%s" % deck_id
+            alts = [a for a in dict.fromkeys(([display] if name else []) + alts) if a and a != title]
             cover_url = deck.get("coverName") or parent.get("coverName")
-            if not title or not cover_url:
-                resp = get("/%s/detail" % deck_id) or {}
-                detail = resp.get("data") if isinstance(resp.get("data"), dict) else resp
-                d_deck = detail.get("mainDeck") or detail.get("deck") or detail
-                d_parent = detail.get("parentDeck") or {}
-                title = title or deck_title(d_deck, None) or deck_title(d_parent, None)
-                cover_url = cover_url or d_deck.get("coverName") or d_parent.get("coverName")
-            title = title or "Jiten #%s" % deck_id
             cover = download_cover(deck_id, cover_url, os.path.join(os.path.dirname(out_path) or ".", "covers")) if covers else None
             cover = cover or (old.get(deck_id) or {}).get("cover")
             entry = {"id": deck_id, "title": title,
                      "url": "https://jiten.moe/decks/media/%s/detail" % deck_id,
                      "kc": dict(counts.most_common())}
+            if alts:
+                entry["alt"] = alts
             if cover:
                 entry["cover"] = cover
             titles.append(entry)
@@ -166,6 +177,10 @@ def selftest():
     assert c == {"猫": 6, "好": 5, "犬": 2}, c
     assert deck_title(info["deck"], None) == "Yotsuba to!" and info["deck"]["coverName"].endswith("x.jpg")
     assert deck_title({}, None) is None
+    d = {"romajiTitle": "Yotsuba to!", "englishTitle": "Yotsuba&!", "originalTitle": "よつばと!"}
+    assert titles_of(d, {}, None) == ("Yotsuba to!", ["Yotsuba&!", "よつばと!"])
+    assert titles_of({}, {"englishTitle": "Only English"}) == ("Only English", [])
+    assert titles_of(None, None) == (None, [])
     assert search("x")[0]["deckId"] == 7
     assert parse_line("12345 | My Title") == (12345, None, "My Title")
     assert parse_line("https://jiten.moe/decks/media/55166/detail") == (55166, None, None)
