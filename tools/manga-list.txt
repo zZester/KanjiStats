@@ -1,4 +1,12 @@
+# One manga per line. Ways to write a line:
+#   https://jiten.moe/decks/media/12345/detail     (exact, recommended)
+#   12345                                          (the same id on its own)
+#   Title words                                    (searches Jiten's MANGA only, takes the first result;
+#                                                   the run log prints what it matched)
+# Add "| Display name" at the end to override the name. Lines starting with # are ignored.
 https://jiten.moe/decks/media/96859/detail
 https://jiten.moe/decks/media/123220/detail
 https://jiten.moe/decks/media/96748/detail
 https://jiten.moe/decks/media/127585/detail
+Stardust Crusaders
+One-Punch Man
